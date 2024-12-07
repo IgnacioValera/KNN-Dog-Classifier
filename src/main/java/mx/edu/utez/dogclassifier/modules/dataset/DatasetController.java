@@ -10,39 +10,40 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/dataset")
-public class DatasetController {
-
-    @Autowired
-    private DatasetService datasetService;
-
-    @Autowired
-    private CustomResponseEntity customResponseEntity;
-
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadDataset(@RequestParam("file")MultipartFile file){
-        try{
-            datasetService.loadDataset(file);
-            return customResponseEntity.get201Response("Dataset cargado correctamente");
-        }catch (IOException e){
-            return customResponseEntity.get400Response();
+    @RestController
+    @RequestMapping("/api/dataset")
+    @CrossOrigin(origins = "http://127.0.0.1:5500") // Permitir solicitudes desde el front-end
+    public class DatasetController {
+    
+        @Autowired
+        private DatasetService datasetService;
+    
+        @Autowired
+        private CustomResponseEntity customResponseEntity;
+    
+        @PostMapping("/upload")
+        public ResponseEntity<?> uploadDataset(@RequestParam("file")MultipartFile file){
+            try{
+                datasetService.loadDataset(file);
+                return customResponseEntity.get201Response("Dataset cargado correctamente");
+            }catch (IOException e){
+                return customResponseEntity.get400Response();
+            }
         }
-    }
-
-    @GetMapping()
-    public ResponseEntity<?> getDataset(){
-        List<Dog> dataset = datasetService.getDataset();
-        if(dataset.isEmpty()) {
-            return customResponseEntity.get404Response();
+    
+        @GetMapping()
+        public ResponseEntity<?> getDataset(){
+            List<Dog> dataset = datasetService.getDataset();
+            if(dataset.isEmpty()) {
+                return customResponseEntity.get404Response();
+            }
+            return customResponseEntity.getOkResponse("Operación exitosa", dataset);
         }
-        return customResponseEntity.getOkResponse("Operación exitosa", dataset);
+    
+    
+    
+    
+    
+    
+    
     }
-
-
-
-
-
-
-
-}
